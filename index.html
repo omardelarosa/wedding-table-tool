@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Clique Optimizer</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        #toolbar { background: white; padding: 15px; border-bottom: 1px solid #d1d9e0; display: flex; flex-wrap: wrap; gap: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        #canvas-viewport { flex-grow: 1; overflow: auto; background: #f8f9fa; padding: 40px; }
+        #canvas-wrapper { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 0 auto; border-radius: 4px; }
+        canvas { cursor: grab; }
+        canvas:active { cursor: grabbing; }
+        .btn { padding: 8px 14px; cursor: pointer; background: #212529; color: white; border: none; border-radius: 6px; font-weight: 500; font-size: 13px; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.85; }
+        .btn-import { background: #0d6efd; }
+        .btn-random { background: #6f42c1; }
+        .btn-sort { background: #198754; }
+        .btn-optimize { background: #dc3545; }
+        input[type="number"], input[type="file"] { font-size: 12px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
+        .hint { color: #6c757d; font-size: 11px; margin-top: 5px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <div id="toolbar">
+        <div class="input-group">
+            <label><strong>1. Data Source:</strong></label>
+            <input type="file" id="csvFile" accept=".csv">
+        </div>
+        <div class="input-group">
+            <label><strong>2. Constraints:</strong></label>
+            <div style="display:flex; gap:5px; align-items:center;">
+                <input type="number" id="maxGroups" value="10" style="width:45px;"> Grps
+                <input type="number" id="groupSize" value="16" style="width:45px;"> Size
+            </div>
+            <p class="hint">W: <input type="number" id="canvasW" style="width:55px;"> H: <input type="number" id="canvasH" style="width:55px;"></p>
+        </div>
+        <div class="input-group">
+            <label><strong>3. Grouping Logic:</strong></label>
+            <div style="display:flex; gap:5px;">
+                <button class="btn btn-import" onclick="handleFileUpload()">Load</button>
+                <button class="btn btn-random" onclick="randomizeGroups()">Randomize</button>
+                <button class="btn btn-optimize" onclick="optimizeGroups()">Optimize Density</button>
+            </div>
+        </div>
+        <div class="input-group">
+            <label><strong>4. Layout & Export:</strong></label>
+            <div style="display:flex; gap:5px;">
+                <button class="btn btn-sort" onclick="reorganizeByGroup()">Sort View</button>
+                <button class="btn" onclick="exportCSV()">Export CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="canvas-viewport">
+        <div id="canvas-wrapper">
+            <canvas id="graphCanvas" oncontextmenu="return false;"></canvas>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
