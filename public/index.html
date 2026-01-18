@@ -122,10 +122,12 @@
                 </div>
             </div>
             <div class="input-group">
-                <label><strong>4. View & Export:</strong></label>
+                <label><strong>4. Find & Export:</strong></label>
                 <div style="display:flex; gap:5px;">
-                    <button class="btn btn-sort" onclick="reorganizeByGroup()">Snap to Tables</button>
-                    <button class="btn" onclick="exportCSV()">Export CSV</button>
+                    <input type="text" id="searchInput" placeholder="Guest name..." style="width:100px; font-size:12px;">
+                    <button class="btn btn-import" onclick="findGuest()">Find</button>
+                    <button class="btn btn-sort" onclick="reorganizeByGroup()">Snap</button>
+                    <button class="btn" onclick="exportCSV()">Export</button>
                 </div>
             </div>
         </div>

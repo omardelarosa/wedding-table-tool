@@ -348,3 +348,39 @@ function exportCSV() {
     a.download = "optimized_groups.csv";
     a.click();
 }
+
+function findGuest() {
+    const query = document
+        .getElementById("searchInput")
+        .value.toLowerCase()
+        .trim();
+    if (!query) return;
+
+    const guest = nodes.find((n) => n.name.toLowerCase().includes(query));
+
+    if (guest) {
+        // 1. Select the node visually
+        selectedNode = guest;
+
+        // 2. Calculate position relative to the viewport
+        const viewport = document.getElementById("canvas-viewport");
+        const canvasWrapper = document.getElementById("canvas-wrapper");
+
+        // guest.x/y is center of node. We want that centered in the viewport.
+        const targetX =
+            guest.x + canvasWrapper.offsetLeft - viewport.clientWidth / 2;
+        const targetY =
+            guest.y + canvasWrapper.offsetTop - viewport.clientHeight / 2;
+
+        // 3. Smooth scroll to the location
+        viewport.scrollTo({
+            left: targetX,
+            top: targetY,
+            behavior: "smooth",
+        });
+
+        draw();
+    } else {
+        alert("Guest not found.");
+    }
+}
