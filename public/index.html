@@ -3,53 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Clique Optimizer</title>
+    <title>Wedding Table Tool</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f0f2f5; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #toolbar { background: white; padding: 15px; border-bottom: 1px solid #d1d9e0; display: flex; flex-wrap: wrap; gap: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; }
+        /* Lock the body to prevent the whole page from scrolling */
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Static Header Section */
+        #static-header {
+            flex-shrink: 0; /* Prevents header from resizing */
+            background: white;
+            z-index: 100;
+            border-bottom: 1px solid #d1d9e0;
+        }
+
+        #brand-bar {
+            padding: 15px 20px 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 { margin: 0; font-size: 24px; color: #1a1a1a; letter-spacing: -0.5px; }
+
+        #toolbar {
+            padding: 10px 20px 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Canvas Viewport handles the scrolling */
+        #canvas-viewport {
+            flex-grow: 1;
+            overflow: auto;
+            background: #f8f9fa;
+            padding: 40px;
+            display: flex;
+        }
+
+        #canvas-wrapper {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin: auto;
+            border-radius: 4px;
+        }
+
+        /* UI Elements */
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-        #canvas-viewport { flex-grow: 1; overflow: auto; background: #f8f9fa; padding: 40px; }
-        #canvas-wrapper { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 0 auto; border-radius: 4px; }
-        canvas { cursor: grab; }
+        canvas { cursor: grab; background-color: white; }
         canvas:active { cursor: grabbing; }
-        .btn { padding: 8px 14px; cursor: pointer; background: #212529; color: white; border: none; border-radius: 6px; font-weight: 500; font-size: 13px; transition: opacity 0.2s; }
-        .btn:hover { opacity: 0.85; }
+
+        .btn {
+            padding: 8px 14px;
+            cursor: pointer;
+            background: #212529;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #424242; }
         .btn-import { background: #0d6efd; }
         .btn-random { background: #6f42c1; }
         .btn-sort { background: #198754; }
         .btn-optimize { background: #dc3545; }
-        input[type="number"], input[type="file"] { font-size: 12px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
+
+        input[type="number"], input[type="file"] {
+            font-size: 12px; padding: 4px; border: 1px solid #ccc; border-radius: 4px;
+        }
         .hint { color: #6c757d; font-size: 11px; margin-top: 5px; line-height: 1.4; }
+
+        .kofi-container { transform: scale(0.9); transform-origin: right; }
     </style>
 </head>
 <body>
 
-    <div id="toolbar">
-        <div class="input-group">
-            <label><strong>1. Data Source:</strong></label>
-            <input type="file" id="csvFile" accept=".csv">
-        </div>
-        <div class="input-group">
-            <label><strong>2. Constraints:</strong></label>
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="number" id="maxGroups" value="10" style="width:45px;"> Grps
-                <input type="number" id="groupSize" value="16" style="width:45px;"> Size
-            </div>
-            <p class="hint">W: <input type="number" id="canvasW" style="width:55px;"> H: <input type="number" id="canvasH" style="width:55px;"></p>
-        </div>
-        <div class="input-group">
-            <label><strong>3. Grouping Logic:</strong></label>
-            <div style="display:flex; gap:5px;">
-                <button class="btn btn-import" onclick="handleFileUpload()">Load</button>
-                <button class="btn btn-random" onclick="randomizeGroups()">Randomize</button>
-                <button class="btn btn-optimize" onclick="optimizeGroups()">Optimize Density</button>
+    <div id="static-header">
+        <div id="brand-bar">
+            <h1>Wedding Table Tool</h1>
+            <div class="kofi-container">
+                <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+                <script type='text/javascript'>
+                    kofiwidget2.init('Support me on Ko-fi', '#72a4f2', 'K3K51SJIVR');
+                    kofiwidget2.draw();
+                </script>
             </div>
         </div>
-        <div class="input-group">
-            <label><strong>4. Layout & Export:</strong></label>
-            <div style="display:flex; gap:5px;">
-                <button class="btn btn-sort" onclick="reorganizeByGroup()">Sort View</button>
-                <button class="btn" onclick="exportCSV()">Export CSV</button>
+
+        <div id="toolbar">
+            <div class="input-group">
+                <label><strong>1. Guest List:</strong></label>
+                <input type="file" id="csvFile" accept=".csv">
+            </div>
+            <div class="input-group">
+                <label><strong>2. Table Constraints:</strong></label>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <input type="number" id="maxGroups" value="10" style="width:45px;"> Tables
+                    <input type="number" id="groupSize" value="8" style="width:45px;"> Seats
+                </div>
+                <p class="hint">W: <input type="number" id="canvasW" style="width:50px;"> H: <input type="number" id="canvasH" style="width:50px;"></p>
+            </div>
+            <div class="input-group">
+                <label><strong>3. Seating Logic:</strong></label>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn btn-import" onclick="handleFileUpload()">Load Guests</button>
+                    <button class="btn btn-random" onclick="randomizeGroups()">Shuffle All</button>
+                    <button class="btn btn-optimize" onclick="optimizeGroups()">Optimize Seating</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label><strong>4. View & Export:</strong></label>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn btn-sort" onclick="reorganizeByGroup()">Snap to Tables</button>
+                    <button class="btn" onclick="exportCSV()">Export CSV</button>
+                </div>
             </div>
         </div>
     </div>
